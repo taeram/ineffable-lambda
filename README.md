@@ -32,19 +32,19 @@ This AWS Lambda code is used to resize images uploaded by [ineffable](https://gi
 
 ### Deploy to Lambda
 
-    * Download the latest version of the Lambda dependencies: [ineffable-lambda-dependencies.latest.zip](https://s3.amazonaws.com/ineffable-code/ineffable-lambda-dependencies.latest.zip)
-    * Download the latest version of the `main.py` from this repo and add it to the dependencies zip file
-    * Upload the zip file to AWS Lambda
-    * Done!
+* Download the latest version of the Lambda dependencies: [ineffable-lambda-dependencies.latest.zip](https://s3.amazonaws.com/ineffable-code/ineffable-lambda-dependencies.latest.zip)
+* Download the latest version of the `main.py` from this repo and add it to the dependencies zip file
+* Upload the zip file to AWS Lambda
+* Done!
 
 ### Rebuilding the dependencies
 
 This step shouldn't be necessary, but if you need to rebuild the dependencies:
 
-    * Spin up a new EC2 instance using AMI `ami-60b6c60a` in the `us-east-1` region
-     * Check https://docs.aws.amazon.com/lambda/latest/dg/current-supported-versions.html for the latest AMI version for each region
-    * SSH into the new instance `ssh -i ~/.ssh/<your key pair>.pem ec2-user@<instance ip address>`
-    * Use git to clone this repo: `sudo yum install -y git && git clone git@github.com:taeram/ineffable-lambda.git`
-    * Build the package by: `sudo ./bin/package.sh`
-    * Copy the env.zip to your local machine
-    * Add main.py to env.zip and upload env.zip to AWS Lambda
+* Spin up a new EC2 instance using AMI `ami-60b6c60a` in the `us-east-1` region
+ * Check https://docs.aws.amazon.com/lambda/latest/dg/current-supported-versions.html for the latest AMI version for each region
+* SSH into the new instance `ssh -i ~/.ssh/<your key pair>.pem ec2-user@<instance ip address>`
+* Use git to clone this repo: `sudo yum install -y git && git clone git@github.com:taeram/ineffable-lambda.git`
+* Build the package by: `sudo ./bin/package.sh`
+* Copy the env.zip to your local machine
+* Add main.py to env.zip and upload env.zip to AWS Lambda
