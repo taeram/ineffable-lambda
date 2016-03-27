@@ -32,10 +32,77 @@ This AWS Lambda code is used to resize images uploaded by [ineffable](https://gi
 
 ### Deploy to Lambda
 
-* Download the latest version of the Lambda dependencies: [ineffable-lambda-dependencies.latest.zip](https://s3.amazonaws.com/ineffable-code/ineffable-lambda-dependencies.latest.zip)
-* Download the latest version of the `main.py` from this repo and add it to the dependencies zip file
-* Upload the zip file to AWS Lambda
-* Done!
+Create a Lambda function:
+
+* Login to the AWS Console, browse to Lambda and click Create a Lambda function
+* In the Select Blueprint step, click Skip
+* In the Configure function step, enter in the following:
+ * Name: ineffable_lambda
+ * Runtime: Python 2.7
+* Under Lambda function code, select "Upload a .ZIP file"
+ * In another browser window, download the latest version of the Lambda dependencies: [ineffable-lambda-dependencies.latest.zip](https://s3.amazonaws.com/ineffable-code/ineffable-lambda-dependencies.latest.zip)
+ * Download the latest version of the `main.py` from this repo and add it to the dependencies zip file
+ * Upload the zip file
+* Under Lambda function handler and role:
+ * Handler: main.lambda_handler
+ * Role: S3 execution role
+  * When asked for a name, call it `ineffable_lambda`
+* Under Advanced settings:
+ * Memory (MB): 128MB
+ * Timeout: 5 min, 0 sec
+ * VPC: No VPC
+* Finally, click Next
+* On the Review step, click Create function
+
+Adding S3 Buckets to your Lambda function:
+
+* Once your Lambda function has been created, browse to it
+* In your Lambda function, click the "Event Sources" tab
+* Click Add event source
+ * Event source type: S3
+* In the Add event source window:
+ * Event source type: S3
+ * Bucket: <select your S3 bucket>
+ * Event type: Post
+ * Prefix: <leave blank>
+ * Suffix: <leave blank>
+ * Enable event source: Enable now
+* Click Submit
+* Repeat these steps for each S3 bucket you're using with ineffable
+
+Edit the IAM settings:
+
+ * Login to the AWS console, and browse to IAM
+ * In the sidebar, click Roles
+ * Click the `ineffable_lambda` role we created above
+ * Under Inline Policies, click "Edit Policy"
+ * Update the policy so it looks like the following:
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+            ],
+            "Resource": "arn:aws:logs:*:*:*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "s3:GetObject",
+                "s3:PutObject",
+                "s3:PutObjectAcl"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+```
+ * Click Apply Policy
 
 ### Rebuilding the dependencies
 

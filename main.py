@@ -10,7 +10,7 @@ from PIL import Image
 
 s3 = boto3.client('s3')
 
-def handler_name(event, context):
+def lambda_handler(event, context):
     """
         The AWS Lambda handler
 
