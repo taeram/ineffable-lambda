@@ -5,27 +5,17 @@ set -o pipefail
 
 echo "*** Install system dependencies"
 yum update -y
-yum install -y \
-	freetype-devel \
-	gcc \
-	lcms2-devel \
-	libjpeg-devel \
-	libtiff-devel \
-	libzip-devel \
-	tcl-devel \
-	tk-devel
+yum install -y gcc
 
-echo "*** Create the virtualenv"
-VIRTUALENV_DIR=$( mktemp --directory )
-/usr/bin/virtualenv \
-	--python /usr/bin/python $VIRTUALENV_DIR \
-	--always-copy
-source $VIRTUALENV_DIR/bin/activate
-
-echo "*** Install Python dependencies"
-pip install --upgrade pip
-pip install --verbose --use-wheel pillow
-deactivate
+echo "*** Download and compile ImageMagick"
+IMAGEMAGICK_DIR=$( mktemp --directory )
+yum -y install libpng-devel \
+               libjpeg-devel \
+               libtiff-devel
+curl http://www.imagemagick.org/download/ImageMagick.tar.gz | tar zx --strip-components=1 -C $IMAGEMAGICK_DIR
+cd $IMAGEMAGICK_DIR
+./configure --enable-shared=no --enable-static=yes
+make
 
 echo "*** Download FFMPEG"
 FFMPEG_DIR=$( mktemp --directory )
@@ -33,11 +23,12 @@ curl http://johnvansickle.com/ffmpeg/builds/ffmpeg-git-64bit-static.tar.xz | tar
 
 echo "*** Zip everything up"
 ZIP_FILE=$( mktemp --suffix=.zip --dry-run )
-cd $VIRTUALENV_DIR/lib/python2.7/site-packages
-zip -r9 $ZIP_FILE *
-cd $VIRTUALENV_DIR/lib64/python2.7/site-packages
-zip -r9 $ZIP_FILE *
+cd $IMAGEMAGICK_DIR/utilities
+zip -r9 -X $ZIP_FILE convert
+rm -rf $IMAGEMAGICK_DIR
+
 cd $FFMPEG_DIR
-zip -r9 $ZIP_FILE ffmpeg
+zip -r9 -X $ZIP_FILE ffmpeg
+rm -rf $FFMPEG_DIR
 
 echo "*** Created package in $ZIP_FILE"

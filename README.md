@@ -7,15 +7,9 @@ This AWS Lambda code is used to resize images uploaded by [ineffable](https://gi
     git clone git@github.com:taeram/ineffable-lambda.git
     cd ineffable-lambda
 
-    # Install system dependencies (for Ubuntu)
-    sudo apt-get install -y libjpeg-dev libtiff-dev libzip-dev gcc tk-dev tcl-dev
-
     # Setup virtualenv
     virtualenv .venv
     source .venv/bin/activate
-
-    # Install the python dependencies
-    pip install -r requirements.txt
 
     # Install the latest supported version of boto3: https://docs.aws.amazon.com/lambda/latest/dg/current-supported-versions.html
     pip install boto3==1.2.6
@@ -23,6 +17,9 @@ This AWS Lambda code is used to resize images uploaded by [ineffable](https://gi
     # Install and configure the AWS CLI
     pip install awscli six
     aws configure
+
+    # Install ImageMagick
+    sudo apt-get install -y imagemagick
 
     # Download and install the ffmpeg binary to the current directory (for converting .gif to .webm)
     FFMPEG_DIR=$( mktemp --directory )
